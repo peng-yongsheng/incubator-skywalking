@@ -29,7 +29,6 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.skywalking.apm.collector.ui.graphql.GraphQLSchemaForUITestCase;
 import org.junit.Test;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -91,6 +90,6 @@ public class LearnSchemaTestCase {
     }
 
     private File loadSchema(final String s) {
-        return new File(GraphQLSchemaForUITestCase.class.getClassLoader().getResource(s).getFile());
+        return new File(LearnSchemaTestCase.class.getClassLoader().getResource(s).getFile());
     }
 }
