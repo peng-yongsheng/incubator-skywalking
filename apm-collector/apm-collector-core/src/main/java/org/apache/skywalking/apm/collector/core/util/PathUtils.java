@@ -18,23 +18,34 @@
 
 package org.apache.skywalking.apm.collector.core.util;
 
+import java.io.File;
+
 /**
  * @author peng-yongsheng
  */
-public class Const {
-    public static final int NONE = 0;
-    public static final String ID_SPLIT = "_";
-    public static final String PACKAGE_SEPARATOR = ".";
-    public static final String PACKAGE_SEPARATOR_REGEX = "\\.";
-    public static final String FILE_PATH_SEPARATOR = "/";
-    public static final int NONE_APPLICATION_ID = 1;
-    public static final int NONE_INSTANCE_ID = 1;
-    public static final int NONE_SERVICE_ID = 1;
-    public static final String NONE_SERVICE_NAME = "None";
-    public static final String USER_CODE = "User";
-    public static final String SEGMENT_SPAN_SPLIT = "S";
-    public static final String UNKNOWN = "Unknown";
-    public static final String EXCEPTION = "Exception";
-    public static final String EMPTY_STRING = "";
-    public static final String FILE_SUFFIX = "sw";
+public class PathUtils {
+
+    private PathUtils() {
+    }
+
+    public static String pathToPackage(String path) {
+        if (path.startsWith(Const.FILE_PATH_SEPARATOR)) {
+            path = path.substring(1);
+        }
+
+        return path.replaceAll(Const.FILE_PATH_SEPARATOR, Const.PACKAGE_SEPARATOR);
+    }
+
+    public static String packageToPath(String packageName) {
+        return packageName.replaceAll(Const.PACKAGE_SEPARATOR_REGEX, File.separator);
+    }
+
+    public static String trimSuffix(String name) {
+        int dotIndex = name.indexOf(Const.PACKAGE_SEPARATOR);
+        if (-1 == dotIndex) {
+            return name;
+        }
+
+        return name.substring(0, dotIndex);
+    }
 }

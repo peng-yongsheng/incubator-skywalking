@@ -18,23 +18,23 @@
 
 package org.apache.skywalking.apm.collector.core.util;
 
+import java.io.IOException;
+import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
  * @author peng-yongsheng
  */
-public class Const {
-    public static final int NONE = 0;
-    public static final String ID_SPLIT = "_";
-    public static final String PACKAGE_SEPARATOR = ".";
-    public static final String PACKAGE_SEPARATOR_REGEX = "\\.";
-    public static final String FILE_PATH_SEPARATOR = "/";
-    public static final int NONE_APPLICATION_ID = 1;
-    public static final int NONE_INSTANCE_ID = 1;
-    public static final int NONE_SERVICE_ID = 1;
-    public static final String NONE_SERVICE_NAME = "None";
-    public static final String USER_CODE = "User";
-    public static final String SEGMENT_SPAN_SPLIT = "S";
-    public static final String UNKNOWN = "Unknown";
-    public static final String EXCEPTION = "Exception";
-    public static final String EMPTY_STRING = "";
-    public static final String FILE_SUFFIX = "sw";
+public class FileScanUtilsTestCase {
+
+    private static final String PACKAGE_NAME = "org.apache.skywalking.apm.collector.core.scan";
+
+    @Test
+    public void testScan() throws IOException {
+        List<String> files = FileScanUtils.scan(PACKAGE_NAME);
+
+        Assert.assertEquals("org.apache.skywalking.apm.collector.core.scan.TestScanB", files.get(0));
+        Assert.assertEquals("org.apache.skywalking.apm.collector.core.scan.TestScanA", files.get(1));
+    }
 }

@@ -18,23 +18,29 @@
 
 package org.apache.skywalking.apm.collector.core.util;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
  * @author peng-yongsheng
  */
-public class Const {
-    public static final int NONE = 0;
-    public static final String ID_SPLIT = "_";
-    public static final String PACKAGE_SEPARATOR = ".";
-    public static final String PACKAGE_SEPARATOR_REGEX = "\\.";
-    public static final String FILE_PATH_SEPARATOR = "/";
-    public static final int NONE_APPLICATION_ID = 1;
-    public static final int NONE_INSTANCE_ID = 1;
-    public static final int NONE_SERVICE_ID = 1;
-    public static final String NONE_SERVICE_NAME = "None";
-    public static final String USER_CODE = "User";
-    public static final String SEGMENT_SPAN_SPLIT = "S";
-    public static final String UNKNOWN = "Unknown";
-    public static final String EXCEPTION = "Exception";
-    public static final String EMPTY_STRING = "";
-    public static final String FILE_SUFFIX = "sw";
+public class PathUtilsTestCase {
+
+    @Test
+    public void testPathToPackage() {
+        String path = PathUtils.packageToPath("org.apache.skywalking");
+        Assert.assertEquals("org/apache/skywalking", path);
+    }
+
+    @Test
+    public void testPackageToPath() {
+        String packageName = PathUtils.pathToPackage("org/apache/skywalking");
+        Assert.assertEquals("org.apache.skywalking", packageName);
+    }
+
+    @Test
+    public void testTrimSuffix() {
+        String suffix = PathUtils.trimSuffix("org.apache.skywalking");
+        Assert.assertEquals("org", suffix);
+    }
 }
