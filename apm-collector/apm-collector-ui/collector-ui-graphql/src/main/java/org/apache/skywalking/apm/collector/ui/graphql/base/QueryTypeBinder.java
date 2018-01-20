@@ -73,7 +73,7 @@ class QueryTypeBinder {
                     QueryMethodBuilder.appendInputField(methodDefinition, parameter.getType().getSimpleName());
                 }
 
-                Object instance = null;
+                Object instance;
                 try {
                     instance = queryTypeClass.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {

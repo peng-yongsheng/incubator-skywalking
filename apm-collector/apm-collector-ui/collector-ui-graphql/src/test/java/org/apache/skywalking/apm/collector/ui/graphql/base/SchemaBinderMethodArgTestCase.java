@@ -45,8 +45,8 @@ public class SchemaBinderMethodArgTestCase {
     @Test
     public void testInputInteger() throws GraphQLSchemaException {
         GraphQL graphQL = SchemaBinder.newBinder()
-            .protocol("schema {query: StringInputQueryType}" +
-                "type StringInputQueryType {" +
+            .protocol("schema {query: IntegerInputQueryType}" +
+                "type IntegerInputQueryType {" +
                 "    test(arg1: Int, arg2: Int, arg3: Int): Int" +
                 "}")
             .build();
@@ -54,5 +54,19 @@ public class SchemaBinderMethodArgTestCase {
         ExecutionResult executionResult = graphQL.execute("{test(arg1: 1, arg2: 1, arg3: 1)}");
         String result = executionResult.getData().toString();
         Assert.assertEquals("{test=0}", result);
+    }
+
+    @Test
+    public void testInputFloat() throws GraphQLSchemaException {
+        GraphQL graphQL = SchemaBinder.newBinder()
+            .protocol("schema {query: FloatInputQueryType}" +
+                "type FloatInputQueryType {" +
+                "    test(arg1: Float, arg2: Float, arg3: Float): Float" +
+                "}")
+            .build();
+
+        ExecutionResult executionResult = graphQL.execute("{test(arg1: 1, arg2: 1, arg3: 1)}");
+        String result = executionResult.getData().toString();
+        Assert.assertEquals("{test=0.0}", result);
     }
 }

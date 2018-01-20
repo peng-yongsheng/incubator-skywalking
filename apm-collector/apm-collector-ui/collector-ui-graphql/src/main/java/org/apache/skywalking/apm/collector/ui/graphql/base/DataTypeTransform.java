@@ -24,8 +24,10 @@ package org.apache.skywalking.apm.collector.ui.graphql.base;
 class DataTypeTransform {
 
     private static final String TYPE_INT = "int";
+    private static final String TYPE_FLOAT = "float";
     private static final String TYPE_TRANSFORM_INT = "Integer";
     private static final String TYPE_TRANSFORM_STRING = "String";
+    private static final String TYPE_TRANSFORM_DOUBLE = "Double";
 
     private DataTypeTransform() {
     }
@@ -33,6 +35,8 @@ class DataTypeTransform {
     static String typeNameTransform(String typeName) {
         if (TYPE_INT.equals(typeName.toLowerCase())) {
             return TYPE_TRANSFORM_INT;
+        } else if (TYPE_FLOAT.equals(typeName.toLowerCase())) {
+            return TYPE_TRANSFORM_DOUBLE;
         } else {
             return typeName;
         }
@@ -40,6 +44,8 @@ class DataTypeTransform {
 
     static boolean isBaseType(String typeName) {
         String transformedTypeName = typeNameTransform(typeName);
-        return TYPE_TRANSFORM_INT.equals(transformedTypeName) || TYPE_TRANSFORM_STRING.equals(transformedTypeName);
+        return TYPE_TRANSFORM_INT.equals(transformedTypeName)
+            || TYPE_TRANSFORM_STRING.equals(transformedTypeName)
+            || TYPE_TRANSFORM_DOUBLE.equals(transformedTypeName);
     }
 }
