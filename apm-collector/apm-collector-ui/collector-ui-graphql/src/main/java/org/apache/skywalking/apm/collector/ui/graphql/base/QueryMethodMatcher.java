@@ -62,7 +62,7 @@ public class QueryMethodMatcher implements DataFetcher {
     }
 
     private Object dataInvoke(GraphQLArgument argument, Map<String, Object> values) {
-        if (String.class.getSimpleName().equals(argument.getType().getName())) {
+        if (DataTypeTransform.isBaseType(argument.getType().getName())) {
             return values.get(argument.getName());
         }
         return null;

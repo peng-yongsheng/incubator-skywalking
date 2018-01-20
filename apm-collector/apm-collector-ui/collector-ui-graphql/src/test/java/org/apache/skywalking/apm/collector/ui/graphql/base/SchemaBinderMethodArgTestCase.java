@@ -41,4 +41,18 @@ public class SchemaBinderMethodArgTestCase {
         String result = executionResult.getData().toString();
         Assert.assertEquals("{test=ok}", result);
     }
+
+    @Test
+    public void testInputInteger() throws GraphQLSchemaException {
+        GraphQL graphQL = SchemaBinder.newBinder()
+            .protocol("schema {query: StringInputQueryType}" +
+                "type StringInputQueryType {" +
+                "    test(arg1: Int, arg2: Int, arg3: Int): Int" +
+                "}")
+            .build();
+
+        ExecutionResult executionResult = graphQL.execute("{test(arg1: 1, arg2: 1, arg3: 1)}");
+        String result = executionResult.getData().toString();
+        Assert.assertEquals("{test=0}", result);
+    }
 }

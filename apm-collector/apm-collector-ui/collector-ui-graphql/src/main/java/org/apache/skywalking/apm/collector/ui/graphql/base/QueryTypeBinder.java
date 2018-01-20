@@ -24,7 +24,6 @@ import graphql.language.TypeName;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
-import org.apache.skywalking.apm.collector.core.UnexpectedException;
 import org.apache.skywalking.apm.collector.core.util.FileScanUtils;
 
 /**
@@ -39,8 +38,8 @@ class QueryTypeBinder {
         loadClass();
     }
 
-    void bind(ObjectTypeDefinition queryTypeDefinition) {
-        queryTypeDefinition.getFieldDefinitions().forEach((FieldDefinition fieldDefinition) -> {
+    void bind(ObjectTypeDefinition queryTypeDefinition) throws MethodNotFoundException {
+        for (FieldDefinition fieldDefinition : queryTypeDefinition.getFieldDefinitions()) {
             StringBuilder methodDefinition = new StringBuilder();
             QueryMethodBuilder.appendMethodName(methodDefinition, fieldDefinition.getName());
             QueryMethodBuilder.appendReturnType(methodDefinition, ((TypeName)fieldDefinition.getType()).getName());
@@ -51,9 +50,9 @@ class QueryTypeBinder {
             });
 
             if (!invokerContainer.contains(QueryMethodBuilder.toString(methodDefinition))) {
-                throw new UnexpectedException("");
+                throw new MethodNotFoundException("The method: " + QueryMethodBuilder.toString(methodDefinition) + "not found.");
             }
-        });
+        }
     }
 
     private void loadClass() throws GraphQLSchemaException {

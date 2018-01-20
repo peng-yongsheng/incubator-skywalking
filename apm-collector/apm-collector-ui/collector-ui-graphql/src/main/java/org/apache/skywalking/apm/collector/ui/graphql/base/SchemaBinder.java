@@ -69,7 +69,7 @@ public class SchemaBinder {
         return this;
     }
 
-    public GraphQL build() {
+    public GraphQL build() throws GraphQLSchemaException {
         RuntimeWiring.Builder runtimeWiring = newRuntimeWiring();
 
         operationTypeBinder.bind(typeDefinitionRegistry.schemaDefinition().get().getOperationTypeDefinitions());

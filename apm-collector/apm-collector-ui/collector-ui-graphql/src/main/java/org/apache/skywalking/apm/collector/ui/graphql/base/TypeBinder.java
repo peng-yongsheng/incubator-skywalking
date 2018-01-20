@@ -46,8 +46,8 @@ class TypeBinder {
         loadClass();
     }
 
-    void bind(Collection<TypeDefinition> typeDefinitions) {
-        typeDefinitions.forEach(typeDefinition -> {
+    void bind(Collection<TypeDefinition> typeDefinitions) throws MethodNotFoundException {
+        for (TypeDefinition typeDefinition : typeDefinitions) {
             if (typeDefinition instanceof ObjectTypeDefinition) {
                 if (operationTypeContainer.isQueryTypeDefinition(typeDefinition.getName())) {
                     queryTypeBinder.bind((ObjectTypeDefinition)typeDefinition);
@@ -63,7 +63,7 @@ class TypeBinder {
                     throw new UnexpectedException("Could not found the enum type definition named " + typeDefinition.getName());
                 }
             }
-        });
+        }
     }
 
     private void loadClass() {

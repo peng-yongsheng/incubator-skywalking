@@ -36,7 +36,7 @@ class QueryMethodBuilder {
     }
 
     static void appendReturnType(StringBuilder methodDefinition, String returnType) {
-        methodDefinition.append(RETURN).append(SEPARATOR).append(returnType).append(SEPARATOR);
+        methodDefinition.append(RETURN).append(SEPARATOR).append(DataTypeTransform.typeNameTransform(returnType)).append(SEPARATOR);
     }
 
     static void appendInputHead(StringBuilder methodDefinition) {
@@ -44,7 +44,7 @@ class QueryMethodBuilder {
     }
 
     static void appendInputField(StringBuilder methodDefinition, String typeName) {
-        methodDefinition.append(typeName).append(SEPARATOR);
+        methodDefinition.append(DataTypeTransform.typeNameTransform(typeName)).append(SEPARATOR);
     }
 
     static String toString(StringBuilder methodDefinition) {
