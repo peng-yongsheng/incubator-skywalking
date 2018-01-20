@@ -28,6 +28,7 @@ class DataTypeTransform {
     private static final String TYPE_TRANSFORM_INT = "Integer";
     private static final String TYPE_TRANSFORM_STRING = "String";
     private static final String TYPE_TRANSFORM_DOUBLE = "Double";
+    private static final String TYPE_TRANSFORM_BOOLEAN = "Boolean";
 
     private DataTypeTransform() {
     }
@@ -46,6 +47,7 @@ class DataTypeTransform {
         String transformedTypeName = typeNameTransform(typeName);
         return TYPE_TRANSFORM_INT.equals(transformedTypeName)
             || TYPE_TRANSFORM_STRING.equals(transformedTypeName)
+            || TYPE_TRANSFORM_BOOLEAN.equals(transformedTypeName)
             || TYPE_TRANSFORM_DOUBLE.equals(transformedTypeName);
     }
 }

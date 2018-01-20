@@ -69,4 +69,18 @@ public class SchemaBinderMethodArgTestCase {
         String result = executionResult.getData().toString();
         Assert.assertEquals("{test=0.0}", result);
     }
+
+    @Test
+    public void testInputBoolean() throws GraphQLSchemaException {
+        GraphQL graphQL = SchemaBinder.newBinder()
+            .protocol("schema {query: BooleanInputQueryType}" +
+                "type BooleanInputQueryType {" +
+                "    test(arg1: Boolean, arg2: Boolean, arg3: Boolean): Boolean" +
+                "}")
+            .build();
+
+        ExecutionResult executionResult = graphQL.execute("{test(arg1: true, arg2: true, arg3: false)}");
+        String result = executionResult.getData().toString();
+        Assert.assertEquals("{test=false}", result);
+    }
 }

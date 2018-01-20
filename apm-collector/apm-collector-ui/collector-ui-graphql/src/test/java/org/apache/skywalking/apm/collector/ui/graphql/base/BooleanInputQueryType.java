@@ -24,12 +24,12 @@ import org.junit.Assert;
  * @author peng-yongsheng
  */
 @GraphQLQueryType
-public class IntegerInputQueryType {
+public class BooleanInputQueryType {
 
-    public int test(int arg1, int arg2, int arg3) {
-        Assert.assertEquals(1, arg1);
-        Assert.assertEquals(1, arg2);
-        Assert.assertEquals(1, arg3);
-        return 0;
+    public Boolean test(Boolean arg1, Boolean arg2, Boolean arg3) {
+        Assert.assertEquals(true, arg1);
+        Assert.assertEquals(true, arg2);
+        Assert.assertEquals(false, arg3);
+        return false;
     }
 }
