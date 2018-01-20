@@ -18,22 +18,27 @@
 
 package org.apache.skywalking.apm.collector.ui.graphql.base;
 
+import graphql.ExecutionResult;
+import graphql.GraphQL;
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
  * @author peng-yongsheng
  */
-class OperationTypeContainer {
+public class SchemaBinderMethodArgTestCase {
 
-    private String queryTypeName;
+    @Test
+    public void testInputString() throws GraphQLSchemaException {
+        GraphQL graphQL = SchemaBinder.newBinder()
+            .protocol("schema {query: StringInputQueryType}" +
+                "type StringInputQueryType {" +
+                "    test(arg1: String, arg2: String, arg3: String): String" +
+                "}")
+            .build();
 
-    void setQueryTypeName(String queryTypeName) {
-        this.queryTypeName = queryTypeName;
-    }
-
-    boolean isQueryTypeDefinition(String typeName) {
-        return this.queryTypeName.equals(typeName);
-    }
-
-    String getQueryTypeName() {
-        return queryTypeName;
+        ExecutionResult executionResult = graphQL.execute("{test(arg1: \"1\", arg2: \"1\", arg3: \"1\")}");
+        String result = executionResult.getData().toString();
+        Assert.assertEquals("{test=ok}", result);
     }
 }

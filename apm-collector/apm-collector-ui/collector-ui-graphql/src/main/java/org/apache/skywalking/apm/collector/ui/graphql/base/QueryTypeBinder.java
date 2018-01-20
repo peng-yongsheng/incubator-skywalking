@@ -34,7 +34,7 @@ class QueryTypeBinder {
 
     private final QueryInvokerContainer invokerContainer;
 
-    QueryTypeBinder(QueryInvokerContainer invokerContainer) {
+    QueryTypeBinder(QueryInvokerContainer invokerContainer) throws GraphQLSchemaException {
         this.invokerContainer = invokerContainer;
         loadClass();
     }
@@ -56,12 +56,12 @@ class QueryTypeBinder {
         });
     }
 
-    private void loadClass() {
+    private void loadClass() throws GraphQLSchemaException {
         AnnotationFilter annotationFilter = new AnnotationFilter();
         List<String> scanFiles = FileScanUtils.scan("org.apache.skywalking.apm.collector.ui.graphql");
         List<Class> queryTypeClasses = annotationFilter.filter(scanFiles, GraphQLQueryType.class);
 
-        queryTypeClasses.forEach(queryTypeClass -> {
+        for (Class queryTypeClass : queryTypeClasses) {
             Method[] declaredMethods = queryTypeClass.getDeclaredMethods();
             for (Method method : declaredMethods) {
                 StringBuilder methodDefinition = new StringBuilder();
@@ -78,10 +78,11 @@ class QueryTypeBinder {
                 try {
                     instance = queryTypeClass.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
+                    throw new ReflectionException(e.getMessage());
                 }
 
                 invokerContainer.put(QueryMethodBuilder.toString(methodDefinition), new QueryInvoker(instance, method));
             }
-        });
+        }
     }
 }

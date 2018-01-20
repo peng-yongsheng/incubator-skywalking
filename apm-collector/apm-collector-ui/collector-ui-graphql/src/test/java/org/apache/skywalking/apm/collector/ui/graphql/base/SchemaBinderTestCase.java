@@ -29,7 +29,7 @@ import org.junit.Test;
 public class SchemaBinderTestCase {
 
     @Test
-    public void testFileSchemaBuild() {
+    public void testFileSchemaBuild() throws GraphQLSchemaException {
         GraphQL graphQL = SchemaBinder.newBinder()
             .file("simple.graphqls")
             .build();
@@ -40,7 +40,7 @@ public class SchemaBinderTestCase {
     }
 
     @Test
-    public void testProtocolSchemaBuild() {
+    public void testProtocolSchemaBuild() throws GraphQLSchemaException {
         GraphQL graphQL = SchemaBinder.newBinder()
             .protocol("schema {query: QueryType}" +
                 "type QueryType {" +
@@ -54,7 +54,7 @@ public class SchemaBinderTestCase {
     }
 
     @Test
-    public void testTypeBinder() {
+    public void testTypeBinder() throws GraphQLSchemaException {
         GraphQL graphQL = SchemaBinder.newBinder()
             .protocol("schema {query: QueryType}" +
                 "type QueryType {" +
@@ -77,7 +77,7 @@ public class SchemaBinderTestCase {
     }
 
     @Test
-    public void testTypeExtendsBinder() {
+    public void testTypeExtendsBinder() throws GraphQLSchemaException {
         GraphQL graphQL = SchemaBinder.newBinder()
             .protocol("schema {" +
                 "   query: QueryType" +

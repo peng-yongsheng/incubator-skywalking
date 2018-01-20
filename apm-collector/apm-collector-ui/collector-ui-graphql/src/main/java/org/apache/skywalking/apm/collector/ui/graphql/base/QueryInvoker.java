@@ -37,6 +37,10 @@ class QueryInvoker {
         this.method = method;
     }
 
+    String getClassName() {
+        return instance.getClass().getName();
+    }
+
     Object invoke(Object... args) {
         try {
             return this.method.invoke(instance, args);

@@ -36,7 +36,14 @@ class QueryInvokerContainer {
         return invokerMap.containsKey(invokerName);
     }
 
-    void put(String invokerName, QueryInvoker invoker) {
+    void put(String invokerName, QueryInvoker invoker) throws DuplicatedQueryMethodException {
+        if (invokerMap.containsKey(invokerName)) {
+            String message = "Duplicated method definition: " + invokerName + " in Class { " + System.lineSeparator();
+            message = message + invokerMap.get(invokerName).getClassName() + System.lineSeparator();
+            message = message + invoker.getClassName() + System.lineSeparator();
+            message = message + "}";
+            throw new DuplicatedQueryMethodException(message);
+        }
         invokerMap.put(invokerName, invoker);
     }
 

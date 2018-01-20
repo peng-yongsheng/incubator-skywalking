@@ -18,22 +18,18 @@
 
 package org.apache.skywalking.apm.collector.ui.graphql.base;
 
+import org.junit.Assert;
+
 /**
  * @author peng-yongsheng
  */
-class OperationTypeContainer {
+@GraphQLQueryType
+public class StringInputQueryType {
 
-    private String queryTypeName;
-
-    void setQueryTypeName(String queryTypeName) {
-        this.queryTypeName = queryTypeName;
-    }
-
-    boolean isQueryTypeDefinition(String typeName) {
-        return this.queryTypeName.equals(typeName);
-    }
-
-    String getQueryTypeName() {
-        return queryTypeName;
+    public String test(String arg1, String arg2, String arg3) {
+        Assert.assertEquals("1", arg1);
+        Assert.assertEquals("1", arg2);
+        Assert.assertEquals("1", arg3);
+        return "ok";
     }
 }

@@ -21,6 +21,7 @@ package org.apache.skywalking.apm.collector.ui.graphql.learn;
 import graphql.TypeResolutionEnvironment;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.TypeResolver;
+import org.junit.Assert;
 
 /**
  * @author peng-yongsheng
@@ -29,7 +30,7 @@ public class CharacterTypeResolver implements TypeResolver {
 
     @Override public GraphQLObjectType getType(TypeResolutionEnvironment environment) {
         Object object = environment.getObject();
-        System.out.println("CharacterTypeResolver: " + object.getClass().getName());
+        Assert.assertEquals("org.apache.skywalking.apm.collector.ui.graphql.learn.Human", object.getClass().getName());
         if (object instanceof Human) {
             return (GraphQLObjectType)environment.getSchema().getType("Human");
         }

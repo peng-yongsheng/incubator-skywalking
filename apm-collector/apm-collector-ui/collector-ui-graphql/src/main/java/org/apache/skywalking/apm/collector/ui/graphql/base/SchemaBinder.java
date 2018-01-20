@@ -42,7 +42,7 @@ public class SchemaBinder {
     private final TypeBinder typeBinder;
     private final OperationTypeBinder operationTypeBinder;
 
-    private SchemaBinder() {
+    private SchemaBinder() throws GraphQLSchemaException {
         this.schemaParser = new SchemaParser();
         this.typeDefinitionRegistry = new TypeDefinitionRegistry();
 
@@ -55,7 +55,7 @@ public class SchemaBinder {
         this.typeBinder = new TypeBinder(operationTypeContainer, typeContainer, queryTypeBinder);
     }
 
-    public static SchemaBinder newBinder() {
+    public static SchemaBinder newBinder() throws GraphQLSchemaException {
         return new SchemaBinder();
     }
 
@@ -75,7 +75,7 @@ public class SchemaBinder {
         operationTypeBinder.bind(typeDefinitionRegistry.schemaDefinition().get().getOperationTypeDefinitions());
         typeBinder.bind(typeDefinitionRegistry.types().values());
 
-        runtimeWiring.type("QueryType", builder -> builder.defaultDataFetcher(new QueryMethodMatcher(queryInvokerContainer, typeContainer)));
+        runtimeWiring.type(operationTypeContainer.getQueryTypeName(), builder -> builder.defaultDataFetcher(new QueryMethodMatcher(queryInvokerContainer, typeContainer)));
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring.build());

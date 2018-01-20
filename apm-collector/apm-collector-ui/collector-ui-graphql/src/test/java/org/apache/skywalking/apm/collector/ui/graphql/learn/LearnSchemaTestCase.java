@@ -29,6 +29,7 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
@@ -48,7 +49,7 @@ public class LearnSchemaTestCase {
         Map<String, DataFetcher> dataFetchersMap = new HashMap<>();
         dataFetchersMap.put("human", environment -> {
             String id = environment.getArgument("id");
-            System.out.println("id: " + id);
+            Assert.assertEquals("1", id);
             Human human = new Human();
             human.setId("hello");
             return human;
@@ -56,15 +57,16 @@ public class LearnSchemaTestCase {
 
         dataFetchersMap.put("hero", environment -> {
             String episode = environment.getArgument("episode");
-            System.out.println("episode:" + episode);
+            Assert.assertEquals("NEWHOPE", episode);
             Human human = new Human();
             human.setName("pengys");
             return human;
         });
 
         dataFetchersMap.put("farmer", environment -> {
-            Object object = environment.getArgument("duration");
-            System.out.println("duration:" + object.getClass().getName());
+            Map<String, String> duration = environment.getArgument("duration");
+            Assert.assertEquals("1", duration.get("start"));
+            Assert.assertEquals("1", duration.get("end"));
             Human human = new Human();
             human.setName("farmer");
             return human;
@@ -80,13 +82,13 @@ public class LearnSchemaTestCase {
 
         GraphQL build = GraphQL.newGraphQL(graphQLSchema).build();
         ExecutionResult executionResult = build.execute("{human(id: \"1\"){id}}");
-        System.out.println(executionResult.getData().toString());
+        Assert.assertEquals("{human={id=hello}}", executionResult.getData().toString());
 
         executionResult = build.execute("{hero(episode: NEWHOPE){name}}");
-        System.out.println(executionResult.getData().toString());
+        Assert.assertEquals("{hero={name=pengys}}", executionResult.getData().toString());
 
         executionResult = build.execute("{farmer(duration: {start: \"1\", end: \"1\"}){name}}");
-        System.out.println(executionResult.getData().toString());
+        Assert.assertEquals("{farmer={name=farmer}}", executionResult.getData().toString());
     }
 
     private File loadSchema(final String s) {

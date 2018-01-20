@@ -21,19 +21,9 @@ package org.apache.skywalking.apm.collector.ui.graphql.base;
 /**
  * @author peng-yongsheng
  */
-class OperationTypeContainer {
+public class DuplicatedQueryMethodException extends GraphQLSchemaException {
 
-    private String queryTypeName;
-
-    void setQueryTypeName(String queryTypeName) {
-        this.queryTypeName = queryTypeName;
-    }
-
-    boolean isQueryTypeDefinition(String typeName) {
-        return this.queryTypeName.equals(typeName);
-    }
-
-    String getQueryTypeName() {
-        return queryTypeName;
+    public DuplicatedQueryMethodException(String message) {
+        super(message);
     }
 }
