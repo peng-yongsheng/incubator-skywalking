@@ -31,40 +31,59 @@ import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 /**
  * @author peng-yongsheng
  */
-public class GraphQLSchemaBinder {
+public class SchemaBinder {
 
     private final SchemaParser schemaParser;
+    private final TypeContainer typeContainer;
+    private final QueryInvokerContainer queryInvokerContainer;
+    private final OperationTypeContainer operationTypeContainer;
     private final TypeDefinitionRegistry typeDefinitionRegistry;
+    private final QueryTypeBinder queryTypeBinder;
+    private final TypeBinder typeBinder;
+    private final OperationTypeBinder operationTypeBinder;
 
-    private GraphQLSchemaBinder() {
+    private SchemaBinder() {
         this.schemaParser = new SchemaParser();
         this.typeDefinitionRegistry = new TypeDefinitionRegistry();
+
+        this.typeContainer = new TypeContainer();
+        this.queryInvokerContainer = new QueryInvokerContainer();
+        this.operationTypeContainer = new OperationTypeContainer();
+
+        this.queryTypeBinder = new QueryTypeBinder(queryInvokerContainer);
+        this.operationTypeBinder = new OperationTypeBinder(operationTypeContainer);
+        this.typeBinder = new TypeBinder(operationTypeContainer, typeContainer, queryTypeBinder);
     }
 
-    public static GraphQLSchemaBinder newBinder() {
-        return new GraphQLSchemaBinder();
+    public static SchemaBinder newBinder() {
+        return new SchemaBinder();
     }
 
-    public GraphQLSchemaBinder file(String fileName) {
+    public SchemaBinder file(String fileName) {
         this.typeDefinitionRegistry.merge(schemaParser.parse(loadSchema(fileName)));
         return this;
     }
 
-    public GraphQLSchemaBinder protocol(String protocol) {
+    public SchemaBinder protocol(String protocol) {
         this.typeDefinitionRegistry.merge(schemaParser.parse(protocol));
         return this;
     }
 
     public GraphQL build() {
-        RuntimeWiring.Builder builder = newRuntimeWiring();
+        RuntimeWiring.Builder runtimeWiring = newRuntimeWiring();
+
+        operationTypeBinder.bind(typeDefinitionRegistry.schemaDefinition().get().getOperationTypeDefinitions());
+        typeBinder.bind(typeDefinitionRegistry.types().values());
+
+        runtimeWiring.type("QueryType", builder -> builder.defaultDataFetcher(new QueryMethodMatcher(queryInvokerContainer, typeContainer)));
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
-        GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, builder.build());
+        GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring.build());
 
         return GraphQL.newGraphQL(graphQLSchema).build();
     }
 
     private File loadSchema(final String schema) {
-        return new File(GraphQLSchemaBinder.class.getClassLoader().getResource(schema).getFile());
+        return new File(SchemaBinder.class.getClassLoader().getResource(schema).getFile());
     }
 }

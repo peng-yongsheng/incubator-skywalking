@@ -16,21 +16,20 @@
  *
  */
 
-package org.apache.skywalking.apm.collector.ui.graphql.learn;
-
-import graphql.TypeResolutionEnvironment;
-import graphql.schema.GraphQLObjectType;
-import graphql.schema.TypeResolver;
+package org.apache.skywalking.apm.collector.ui.graphql.base;
 
 /**
  * @author peng-yongsheng
  */
-public class QueryTypeResolver implements TypeResolver {
+class OperationTypeContainer {
 
-    @Override public GraphQLObjectType getType(TypeResolutionEnvironment environment) {
-        System.out.println("QueryTypeResolver");
-        String object = environment.getObject();
-        System.out.println(object);
-        return null;
+    private String queryTypeName;
+
+    void setQueryTypeName(String queryTypeName) {
+        this.queryTypeName = queryTypeName;
+    }
+
+    boolean isQueryTypeDefinition(String typeName) {
+        return this.queryTypeName.equals(typeName);
     }
 }

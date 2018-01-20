@@ -3,5 +3,5 @@ schema {
 }
 
 type QueryType {
-    test(id: String): String
+    test(id: String, name: String): String
 }
