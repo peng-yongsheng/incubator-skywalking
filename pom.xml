@@ -372,5 +372,10 @@
             </build>
         </profile>
     </profiles>
-    
+
+    <scm>
+        <url>https://github.com/apache/incubator-skywalking</url>
+        <connection>scm:git:https://github.com/apache/incubator-skywalking.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/incubator-skywalking.git</developerConnection>
+    </scm>
 </project>
