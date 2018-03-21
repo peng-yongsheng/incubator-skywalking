@@ -76,7 +76,7 @@ public class InstanceH2UIDAO extends H2DAO implements IInstanceUIDAO {
         long fiveMinuteBefore = System.currentTimeMillis() - 5 * 60 * 1000;
         fiveMinuteBefore = TimeBucketUtils.INSTANCE.getSecondTimeBucket(fiveMinuteBefore);
         String sql = SqlBuilder.buildSql(GET_INST_LAST_HEARTBEAT_TIME_SQL, InstanceTable.COLUMN_HEARTBEAT_TIME, InstanceTable.TABLE,
-            InstanceTable.COLUMN_HEARTBEAT_TIME, InstanceTable.COLUMN_INSTANCE_ID);
+                InstanceTable.COLUMN_HEARTBEAT_TIME, InstanceTable.COLUMN_INSTANCE_ID);
         Object[] params = new Object[] {fiveMinuteBefore, applicationInstanceId};
         try (ResultSet rs = client.executeQuery(sql, params)) {
             if (rs.next()) {
@@ -90,11 +90,11 @@ public class InstanceH2UIDAO extends H2DAO implements IInstanceUIDAO {
 
     @Override
     public List<Application> getApplications(long startSecondTimeBucket, long endSecondTimeBucket,
-        int... applicationIds) {
+                                             int... applicationIds) {
         H2Client client = getClient();
         List<Application> applications = new LinkedList<>();
         String sql = SqlBuilder.buildSql(GET_APPLICATIONS_SQL, InstanceTable.COLUMN_INSTANCE_ID,
-            InstanceTable.TABLE, InstanceTable.COLUMN_HEARTBEAT_TIME, InstanceTable.COLUMN_APPLICATION_ID);
+                InstanceTable.TABLE, InstanceTable.COLUMN_HEARTBEAT_TIME, InstanceTable.COLUMN_APPLICATION_ID);
         Object[] params = new Object[] {startSecondTimeBucket};
         try (ResultSet rs = client.executeQuery(sql, params)) {
             while (rs.next()) {
@@ -168,16 +168,12 @@ public class InstanceH2UIDAO extends H2DAO implements IInstanceUIDAO {
         return appServerInfos;
     }
 
-    /**
-     * @author wen-gang.ji
-     */
+    //TODO
     @Override public long getEarliestRegisterTime(int applicationId) {
         return 0;
     }
 
-    /**
-     * @author wen-gang.ji
-     */
+    //TODO
     @Override public long getLatestHeartBeatTime(int applicationId) {
         return 0;
     }
