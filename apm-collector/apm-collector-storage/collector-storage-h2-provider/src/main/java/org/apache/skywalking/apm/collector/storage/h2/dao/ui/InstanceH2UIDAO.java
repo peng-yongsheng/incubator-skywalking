@@ -54,7 +54,7 @@ public class InstanceH2UIDAO extends H2DAO implements IInstanceUIDAO {
     private static final String GET_APPLICATIONS_SQL = "select {3}, count({0}) as cnt from {1} where {2} >= ? group by {3} limit 100";
 
     @Override
-    public Long lastHeartBeatTime() { 
+    public Long lastHeartBeatTime() {
         H2Client client = getClient();
         long fiveMinuteBefore = System.currentTimeMillis() - 5 * 60 * 1000;
         fiveMinuteBefore = TimeBucketUtils.INSTANCE.getSecondTimeBucket(fiveMinuteBefore);
