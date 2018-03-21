@@ -168,12 +168,16 @@ public class InstanceH2UIDAO extends H2DAO implements IInstanceUIDAO {
         return appServerInfos;
     }
 
-    //TODO
+    /**
+     * @author wen-gang.ji
+     */
     @Override public long getEarliestRegisterTime(int applicationId) {
         return 0;
     }
 
-    //TODO
+    /**
+     * @author wen-gang.ji
+     */
     @Override public long getLatestHeartBeatTime(int applicationId) {
         return 0;
     }
