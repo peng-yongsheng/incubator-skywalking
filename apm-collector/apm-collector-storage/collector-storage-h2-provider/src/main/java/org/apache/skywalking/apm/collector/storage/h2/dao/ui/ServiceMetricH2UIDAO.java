@@ -41,7 +41,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @author peng-yongsheng
+ * @author wen-gang.ji
  */
 public class ServiceMetricH2UIDAO extends H2DAO implements IServiceMetricUIDAO {
 
@@ -80,9 +80,7 @@ public class ServiceMetricH2UIDAO extends H2DAO implements IServiceMetricUIDAO {
 
         return trends;
     }
-    /**
-     * @author wen-gang.ji
-     */
+
     @Override public List<Integer> getServiceTPSTrend(int serviceId, Step step, List<DurationPoint> durationPoints) {
         String tableName = TimePyramidTableNameBuilder.build(step, ServiceMetricTable.TABLE);
         H2Client client = getClient();
@@ -135,9 +133,7 @@ public class ServiceMetricH2UIDAO extends H2DAO implements IServiceMetricUIDAO {
 
         return trends;
     }
-    /**
-     * @author wen-gang.ji
-     */
+
     @Override public List<Node> getServicesMetric(Step step, long startTime, long endTime, MetricSource metricSource,
         Collection<Integer> serviceIds) {
         String tableName = TimePyramidTableNameBuilder.build(step, ServiceMetricTable.TABLE);
@@ -168,9 +164,7 @@ public class ServiceMetricH2UIDAO extends H2DAO implements IServiceMetricUIDAO {
 
     }
 
-    /**
-     * @author wen-gang.ji
-     */
+
     @Override public List<ServiceMetric> getSlowService(int applicationId, Step step, long startTimeBucket, long endTimeBucket, Integer topN,
         MetricSource metricSource) {
         topN = topN * 60;

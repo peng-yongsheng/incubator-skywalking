@@ -36,7 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author peng-yongsheng
+ * @author wen-gang.ji
  */
 public class ApplicationAlarmListH2UIDAO extends H2DAO implements IApplicationAlarmListUIDAO {
     private final Logger logger = LoggerFactory.getLogger(ApplicationAlarmListH2UIDAO.class);
@@ -45,9 +45,7 @@ public class ApplicationAlarmListH2UIDAO extends H2DAO implements IApplicationAl
         super(client);
     }
 
-    /**
-     * @author wen-gang.ji
-     */
+
     @Override public List<AlarmTrend> getAlarmedApplicationNum(Step step, long startTimeBucket, long endTimeBucket) {
         String tableName = TimePyramidTableNameBuilder.build(step, ServiceMetricTable.TABLE);
 

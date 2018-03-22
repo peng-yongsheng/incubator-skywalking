@@ -37,7 +37,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 
 /**
- * @author peng-yongsheng
+ * @author wen-gang.ji
  */
 public class ApplicationAlarmH2UIDAO extends H2DAO implements IApplicationAlarmUIDAO {
     private final Logger logger = LoggerFactory.getLogger(ApplicationAlarmH2UIDAO.class);
@@ -46,9 +46,7 @@ public class ApplicationAlarmH2UIDAO extends H2DAO implements IApplicationAlarmU
         super(client);
     }
 
-    /**
-     * @author wen-gang.ji
-     */
+
     @Override
     public Alarm loadAlarmList(String keyword, long startTimeBucket, long endTimeBucket, int limit, int from) throws ParseException {
         String tableName = ApplicationAlarmTable.TABLE;
