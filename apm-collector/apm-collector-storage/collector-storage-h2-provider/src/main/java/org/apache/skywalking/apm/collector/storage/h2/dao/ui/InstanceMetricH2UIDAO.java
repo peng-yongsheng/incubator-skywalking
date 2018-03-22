@@ -39,14 +39,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author peng-yongsheng, clevertension
+ * @author peng-yongsheng, clevertension,wen-gang.ji
  */
 public class InstanceMetricH2UIDAO extends H2DAO implements IInstanceMetricUIDAO {
     private final Logger logger = LoggerFactory.getLogger(InstanceMetricH2UIDAO.class);
     private static final String GET_TPS_METRIC_SQL = "select * from {0} where {1} = ?";
     private static final String GET_SERVER_THROUGHPUT_SQL=
-            "select {0}, sum({1}) as transaction_calls,sum({2}) as transaction_error_calls " +
-            "from {3} where {4} >= ? and {4} <= ? " +
+            "select {0}, sum({1}) as {1},sum({2}) as {2} from {3} where {4} >= ? and {4} <= ? " +
             "and {5}=? and {6}=? group by {0} limit ?";
 
     public InstanceMetricH2UIDAO(H2Client client) {
