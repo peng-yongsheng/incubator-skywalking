@@ -62,11 +62,11 @@ public class NetworkAddressRegisterEsDAO extends EsDAO implements INetworkAddres
         logger.debug("save network address register info, address getApplicationId: {}, network address code: {}, status: {}", networkAddress.getAddressId(), networkAddress.getNetworkAddress(), response.status().name());
     }
 
-    @Override public void update(String id, int spanLayer, int serverType) {
+    @Override public void update(String id, int srcSpanLayer, int serverType) {
         ElasticSearchClient client = getClient();
 
         Map<String, Object> target = new HashMap<>();
-        target.put(NetworkAddressTable.SRC_SPAN_LAYER.getName(), spanLayer);
+        target.put(NetworkAddressTable.SRC_SPAN_LAYER.getName(), srcSpanLayer);
         target.put(NetworkAddressTable.SERVER_TYPE.getName(), serverType);
         client.prepareUpdate(NetworkAddressTable.TABLE, id).setDoc(target).setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE).get();
     }

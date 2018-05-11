@@ -72,11 +72,11 @@ public class NetworkAddressRegisterH2DAO extends H2DAO implements INetworkAddres
         }
     }
 
-    @Override public void update(String id, int spanLayer, int serverType) {
+    @Override public void update(String id, int srcSpanLayer, int serverType) {
         H2Client client = getClient();
 
         Map<String, Object> source = new HashMap<>();
-        source.put(NetworkAddressTable.SRC_SPAN_LAYER.getName(), spanLayer);
+        source.put(NetworkAddressTable.SRC_SPAN_LAYER.getName(), srcSpanLayer);
         source.put(NetworkAddressTable.SERVER_TYPE.getName(), serverType);
 
         String sql = SqlBuilder.buildBatchUpdateSql(InstanceTable.TABLE, source.keySet(), InstanceTable.INSTANCE_ID.getName());

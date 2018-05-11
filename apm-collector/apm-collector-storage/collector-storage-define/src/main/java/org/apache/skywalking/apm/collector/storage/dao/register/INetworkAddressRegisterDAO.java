@@ -31,5 +31,5 @@ public interface INetworkAddressRegisterDAO extends DAO {
 
     void save(NetworkAddress networkAddress);
 
-    void update(String id, int spanLayer, int serverType);
+    void update(String id, int srcSpanLayer, int serverType);
 }

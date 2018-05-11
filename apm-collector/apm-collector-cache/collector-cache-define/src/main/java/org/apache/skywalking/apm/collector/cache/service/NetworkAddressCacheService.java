@@ -28,4 +28,6 @@ public interface NetworkAddressCacheService extends Service {
     int getAddressId(String networkAddress);
 
     NetworkAddress getAddress(int addressId);
+
+    void updateCache(int addressId, int srcSpanLayer, int serverType);
 }

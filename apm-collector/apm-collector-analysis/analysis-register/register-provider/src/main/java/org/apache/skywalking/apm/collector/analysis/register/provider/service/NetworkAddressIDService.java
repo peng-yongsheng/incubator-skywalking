@@ -108,23 +108,24 @@ public class NetworkAddressIDService implements INetworkAddressIDService {
         return getNetworkAddressCacheService().getAddressId(networkAddress);
     }
 
-    @Override public void update(int addressId, int spanLayer, int serverType) {
-        if (!this.compare(addressId, spanLayer, serverType)) {
+    @Override public void update(int addressId, int srcSpanLayer, int serverType) {
+        if (!this.compare(addressId, srcSpanLayer, serverType)) {
             NetworkAddress newNetworkAddress = new NetworkAddress();
             newNetworkAddress.setId(String.valueOf(addressId));
-            newNetworkAddress.setSrcSpanLayer(spanLayer);
+            newNetworkAddress.setSrcSpanLayer(srcSpanLayer);
             newNetworkAddress.setServerType(serverType);
             newNetworkAddress.setAddressId(addressId);
 
             getNetworkAddressGraph().start(newNetworkAddress);
+
         }
     }
 
-    private boolean compare(int addressId, int spanLayer, int serverType) {
+    private boolean compare(int addressId, int srcSpanLayer, int serverType) {
         NetworkAddress networkAddress = networkAddressCacheService.getAddress(addressId);
         
         if (nonNull(networkAddress)) {
-            return spanLayer == networkAddress.getSrcSpanLayer() && serverType == networkAddress.getServerType();
+            return srcSpanLayer == networkAddress.getSrcSpanLayer() && serverType == networkAddress.getServerType();
         }
         return true;
     }

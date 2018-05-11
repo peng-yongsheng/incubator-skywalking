@@ -18,20 +18,17 @@
 
 package org.apache.skywalking.apm.collector.cache.caffeine.service;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.*;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import org.apache.skywalking.apm.collector.cache.service.NetworkAddressCacheService;
 import org.apache.skywalking.apm.collector.core.module.ModuleManager;
-import org.apache.skywalking.apm.collector.core.util.StringUtils;
 import org.apache.skywalking.apm.collector.storage.StorageModule;
 import org.apache.skywalking.apm.collector.storage.dao.cache.INetworkAddressCacheDAO;
 import org.apache.skywalking.apm.collector.storage.table.register.NetworkAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
-import java.util.concurrent.TimeUnit;
-
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 
 /**
  * @author peng-yongsheng
@@ -87,10 +84,25 @@ public class NetworkAddressCacheCaffeineService implements NetworkAddressCacheSe
 
         if (isNull(networkAddress)) {
             networkAddress = getNetworkAddressCacheDAO().getAddressById(addressId);
-            if (StringUtils.isNotEmpty(networkAddress)) {
+            if (Objects.nonNull(networkAddress)) {
                 idCache.put(addressId, networkAddress);
             }
         }
         return networkAddress;
+    }
+
+    @Override public void updateCache(int addressId, int srcSpanLayer, int serverType) {
+        NetworkAddress networkAddress = null;
+        try {
+            networkAddress = idCache.get(addressId, key -> getNetworkAddressCacheDAO().getAddressById(key));
+        } catch (Throwable e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        if (nonNull(networkAddress)) {
+            networkAddress.setSrcSpanLayer(srcSpanLayer);
+            networkAddress.setServerType(serverType);
+            idCache.put(addressId, networkAddress);
+        }
     }
 }

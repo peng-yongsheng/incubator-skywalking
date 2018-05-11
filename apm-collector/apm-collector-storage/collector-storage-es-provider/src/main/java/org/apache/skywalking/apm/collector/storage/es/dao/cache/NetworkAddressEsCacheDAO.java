@@ -22,13 +22,9 @@ import org.apache.skywalking.apm.collector.client.elasticsearch.ElasticSearchCli
 import org.apache.skywalking.apm.collector.core.util.Const;
 import org.apache.skywalking.apm.collector.storage.dao.cache.INetworkAddressCacheDAO;
 import org.apache.skywalking.apm.collector.storage.es.base.dao.EsDAO;
-import org.apache.skywalking.apm.collector.storage.table.register.NetworkAddress;
-import org.apache.skywalking.apm.collector.storage.table.register.NetworkAddressTable;
-import org.elasticsearch.action.get.GetRequestBuilder;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
+import org.apache.skywalking.apm.collector.storage.table.register.*;
+import org.elasticsearch.action.get.*;
+import org.elasticsearch.action.search.*;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
@@ -65,7 +61,6 @@ public class NetworkAddressEsCacheDAO extends EsDAO implements INetworkAddressCa
         GetResponse getResponse = getRequestBuilder.get();
         if (getResponse.isExists()) {
             NetworkAddress address = new NetworkAddress();
-            address.setId((String)getResponse.getSource().get(NetworkAddressTable.ID.getName()));
             address.setAddressId(((Number)getResponse.getSource().get(NetworkAddressTable.ADDRESS_ID.getName())).intValue());
             address.setSrcSpanLayer(((Number)getResponse.getSource().get(NetworkAddressTable.SRC_SPAN_LAYER.getName())).intValue());
             address.setServerType(((Number)getResponse.getSource().get(NetworkAddressTable.SERVER_TYPE.getName())).intValue());

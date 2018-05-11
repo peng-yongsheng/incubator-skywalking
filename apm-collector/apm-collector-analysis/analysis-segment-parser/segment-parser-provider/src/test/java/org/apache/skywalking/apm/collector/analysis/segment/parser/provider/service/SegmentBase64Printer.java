@@ -35,7 +35,7 @@ public class SegmentBase64Printer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SegmentBase64Printer.class);
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        String segmentBase64 = "CgwKCgMXjPKUga3WgBsSvAEIARiF7Jq1nywgp+yatZ8sKlASDAoKAnPAqKD5rNaAGxgBIAIqDjEyNy4wLjAuMTo5MDkyOAJCFC9zZW5kTWVzc2FnZS97Y291bnR9UhQvc2VuZE1lc3NhZ2Uve2NvdW50fTocS2Fma2EvVHJhY2UtdG9waWMtMS9Db25zdW1lclgEYBt6GwoJbXEuYnJva2VyEg4xMjcuMC4wLjE6OTA5MnoZCghtcS50b3BpYxINVHJhY2UtdG9waWMtMRImEP///////////wEY/+uatZ8sILTsmrWfLDD///////////8BUAIYAiAD";
+        String segmentBase64 = "CgwKCgNo3P+IxoO1jRsSUggBGN2z9KS0LCCbtPSktCxA/v//////////AVABWANgAnobCgN1cmwSFGh0dHA6Ly93d3cuYmFpZHUuY29tehIKC2h0dHAubWV0aG9kEgNHRVQSZwgCGJy09KS0LCCdtPSktCww9f//////////AUD9//////////8BUAFYBGAbehsKCW1xLmJyb2tlchIOMTI3LjAuMC4xOjkwOTJ6HAoIbXEudG9waWMSEHRlc3QtdHJhY2UtdG9waWMSowEQ////////////ARjcs/SktCwgnrT0pLQsKiwSDAoKBD721ILBg7WNGxgCIAQwAzgESPf//////////wFY9///////////ATAMWANgDnpACgN1cmwSOWh0dHA6Ly90ZXN0LXd1c2hlbmctMjAxODAxMTUubm92YWxvY2FsOjg3NjMvcHJvamVjdEMvdGVzdHoSCgtodHRwLm1ldGhvZBIDR0VUGAIgAw==";
         byte[] binarySegment = Base64.getDecoder().decode(segmentBase64);
         TraceSegmentObject segmentObject = TraceSegmentObject.parseFrom(binarySegment);
 

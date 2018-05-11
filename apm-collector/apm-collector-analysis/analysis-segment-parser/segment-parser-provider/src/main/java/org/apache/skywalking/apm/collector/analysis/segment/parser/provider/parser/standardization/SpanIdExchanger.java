@@ -19,17 +19,14 @@
 package org.apache.skywalking.apm.collector.analysis.segment.parser.provider.parser.standardization;
 
 import org.apache.skywalking.apm.collector.analysis.register.define.AnalysisRegisterModule;
-import org.apache.skywalking.apm.collector.analysis.register.define.service.INetworkAddressIDService;
-import org.apache.skywalking.apm.collector.analysis.register.define.service.IServiceNameService;
+import org.apache.skywalking.apm.collector.analysis.register.define.service.*;
 import org.apache.skywalking.apm.collector.analysis.segment.parser.define.decorator.SpanDecorator;
 import org.apache.skywalking.apm.collector.configuration.ConfigurationModule;
 import org.apache.skywalking.apm.collector.configuration.service.IComponentLibraryCatalogService;
 import org.apache.skywalking.apm.collector.core.annotations.trace.GraphComputingMetric;
 import org.apache.skywalking.apm.collector.core.module.ModuleManager;
-import org.apache.skywalking.apm.collector.core.util.Const;
-import org.apache.skywalking.apm.collector.core.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.skywalking.apm.collector.core.util.*;
+import org.slf4j.*;
 
 /**
  * @author peng-yongsheng
@@ -82,9 +79,9 @@ public class SpanIdExchanger implements IdExchanger<SpanDecorator> {
                 standardBuilder.setPeerId(peerId);
                 standardBuilder.setPeer(Const.EMPTY_STRING);
 
-                int spanLayer = standardBuilder.getSpanLayerValue();
+                int srcSpanLayer = standardBuilder.getSpanLayerValue();
                 int serverType = componentLibraryCatalogService.getServerIdBasedOnComponent(standardBuilder.getComponentId());
-                networkAddressIDService.update(peerId, spanLayer, serverType);
+                networkAddressIDService.update(peerId, srcSpanLayer, serverType);
             }
         }
 
