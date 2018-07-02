@@ -28,6 +28,9 @@ the streaming aggregation.
 Metric in OAP is totally new feature in 6 series. Build observability for a distributed system based on metric of connected nodes.
 No tracing data is required.
 
+Metric data are aggregated inside AOP cluster in streaming mode. See below about Observability Analysis Language,
+which provides the easy way to do aggregation and analysis in script style. 
+
 ## Observability Analysis Language
 Provide OAL(Observability Analysis Language) to analysis incoming data in streaming mode. 
 
