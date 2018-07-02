@@ -2,54 +2,6 @@
 OAP(Observability Analysis Platform) is a new concept, which starts in SkyWalking 6.x. OAP replaces the 
 old SkyWalking collectors. The capabilities of the platform are following.
 
-## Modules Overview
-```
-- SkyWalking Project
-    - apm-commons
-    - ...
-    - apm-oap
-        - oap-receiver
-            - receiver-skywalking
-            - receiver-zipkin
-            - ...
-        - oap-discovery
-            - discovery-naming
-            - discovery-zookeeper
-            - discovery-standalone
-            - ...
-        - oap-register
-            - register-skywalking
-            - ...
-        - oap-analysis
-            - analysis-trace
-            - analysis-metric
-            - analysis-log
-        - oap-web
-        - oap-libs
-            - cache-lib
-            - remote-lib
-            - storage-lib
-            - client-lib
-            - server-lib
- ```
-### OAP-RECEIVER
-This module contains the submodule of monitoring data receivers. 
-Each one provide network interface to receive monitoring data from different monitor system,  
-and transform to standard object metric, it is the data source of the platform. 
-### OAP-DISCOVERY
-This module contains the submodule of service discoveries of OAP.
-Each one provide different service discovery mechanisms, it makes OAP can deploy into different
-environments.
-### OAP-REGISTER
-This module contains the submodule of object registers.
-Each one provide network interface to register id from object name. The exchange of names helps
-reduce the network package size between monitor and AOP. 
-### OAP-WEB
-
-### OAP-LIBS
-This module contains the submodule of libraries.
-
-## How It Works
 
 ## Observability Analysis Language
 Provide OAL(Observability Analysis Language) to analysis incoming data in streaming mode. 
@@ -119,3 +71,35 @@ endpoint_500 = from(Endpoint.*).filter(responseCode like "5%").percent()
 // Caculate the sum of calls for each service.
 endpointCalls = from(Endpoint.*).sum()
 ```
+
+## Project structure overview
+This overview shows maven modules AOP provided.
+```
+- SkyWalking Project
+    - apm-commons
+    - ...
+    - apm-oap
+        - oap-receiver
+            - receiver-skywalking
+            - receiver-zipkin
+            - ...
+        - oap-discovery
+            - discovery-naming
+            - discovery-zookeeper
+            - discovery-standalone
+            - ...
+        - oap-register
+            - register-skywalking
+            - ...
+        - oap-analysis
+            - analysis-trace
+            - analysis-metric
+            - analysis-log
+        - oap-web
+        - oap-libs
+            - cache-lib
+            - remote-lib
+            - storage-lib
+            - client-lib
+            - server-lib
+ ```
