@@ -34,8 +34,11 @@ which provides the easy way to do aggregation and analysis in script style.
 ## Observability Analysis Language
 Provide OAL(Observability Analysis Language) to analysis incoming data in streaming mode. 
 
-OAL focuses on metric in Service, Service Instance and Endpoint. Because of that, the language is easy to 
+OAL focuses on metric in Service, Service Instance and Ingress. Because of that, the language is easy to 
 learn and use.
+
+Considering performance, reading and debugging, OAL is defined as a compile language. 
+The OAL scrips will be compiled to normal Java codes in package stage.
 
 ### Grammar
 Scripts should be named as `*.oal`
@@ -47,7 +50,7 @@ VAR = from(SCOPE.(* | [FIELD][,FIELD ...]))
 ```
 
 #### Scope
-**SCOPE** in (`All`, `Service`, `ServiceInst`, `Endpoint`, `ServiceRelation`, `ServiceInstRelation`, `EndpointRelation`).
+**SCOPE** in (`All`, `Service`, `ServiceInst`, `Ingress`, `ServiceRelation`, `ServiceInstRelation`, `IngressRelation`).
 
 #### Field
 TODO
@@ -70,34 +73,34 @@ The variable name for storage implementor, alarm and query modules. The type inf
 #### Group
 All metric data will be grouped by Scope.ID and min-level TimeBucket. 
 
-- In `Endpoint` scope, the Scope.ID = Endpoint id (the unique id based on service and its endpoint)
+- In `Ingress` scope, the Scope.ID = Ingress id (the unique id based on service and its ingress)
 
 ### Examples
 ```
-// Caculate p99 of both endpoint1 and endpoint2
-endpoint_p99 = from(Endpoint.latency).filter(name in ("endpoint1", "endpoint2")).summary(0.99)
+// Caculate p99 of both Ingress1 and Ingress2
+Ingress_p99 = from(Ingress.latency).filter(name in ("Ingress1", "Ingress2")).summary(0.99)
 
-// Caculate p99 of endpoint name started with `serv`
-serv_endpoint_p99 = from(Endpoint.latency).filter(name like ("serv%")).summary(0.99)
+// Caculate p99 of Ingress name started with `serv`
+serv_Ingress_p99 = from(Ingress.latency).filter(name like ("serv%")).summary(0.99)
 
-// Caculate the avg response time of each endpoint
-endpoint_avg = from(Endpoint.latency).avg()
+// Caculate the avg response time of each Ingress
+Ingress_avg = from(Ingress.latency).avg()
 
-// Caculate the histogram of each endpoint by 50 ms steps.
+// Caculate the histogram of each Ingress by 50 ms steps.
 // Always thermodynamic diagram in UI matches this metric. 
-endpoint_histogram = from(Endpoint.latency).histogram(50)
+Ingress_histogram = from(Ingress.latency).histogram(50)
 
 // Caculate the percent of response status is true, for each service.
-endpoint_success = from(Endpoint.*).filter(status = "true").percent()
+Ingress_success = from(Ingress.*).filter(status = "true").percent()
 
 // Caculate the percent of response code in [200, 299], for each service.
-endpoint_200 = from(Endpoint.*).filter(responseCode like "2%").percent()
+Ingress_200 = from(Ingress.*).filter(responseCode like "2%").percent()
 
 // Caculate the percent of response code in [500, 599], for each service.
-endpoint_500 = from(Endpoint.*).filter(responseCode like "5%").percent()
+Ingress_500 = from(Ingress.*).filter(responseCode like "5%").percent()
 
 // Caculate the sum of calls for each service.
-endpointCalls = from(Endpoint.*).sum()
+IngressCalls = from(Ingress.*).sum()
 ```
 
 ## Project structure overview
