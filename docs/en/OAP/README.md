@@ -28,10 +28,10 @@ the streaming aggregation.
 Metric in OAP is totally new feature in 6 series. Build observability for a distributed system based on metric of connected nodes.
 No tracing data is required.
 
-Metric data are aggregated inside AOP cluster in streaming mode. See below about Observability Analysis Language,
+Metric data are aggregated inside AOP cluster in streaming mode. See below about [Observability Analysis Language](#observability-analysis-language),
 which provides the easy way to do aggregation and analysis in script style. 
 
-## Observability Analysis Language
+### Observability Analysis Language
 Provide OAL(Observability Analysis Language) to analysis incoming data in streaming mode. 
 
 OAL focuses on metric in Service, Service Instance and Ingress. Because of that, the language is easy to 
@@ -40,11 +40,11 @@ learn and use.
 Considering performance, reading and debugging, OAL is defined as a compile language. 
 The OAL scrips will be compiled to normal Java codes in package stage.
 
-### Grammar
+#### Grammar
 Scripts should be named as `*.oal`
 ```
 
-VAR = from(SCOPE.(* | [FIELD][,FIELD ...]))
+METRIC_NAME = from(SCOPE.(* | [FIELD][,FIELD ...]))
 [.filter(FIELD OP [INT | STRING])]
 .FUNCTION([PARAM][, PARAM ...])
 ```
@@ -67,15 +67,15 @@ Provided functions
 - `sum`
 - `histogram`
 
-#### VAR
-The variable name for storage implementor, alarm and query modules. The type inference supported by core.
+#### Metric name
+The metric name for storage implementor, alarm and query modules. The type inference supported by core.
 
 #### Group
 All metric data will be grouped by Scope.ID and min-level TimeBucket. 
 
 - In `Ingress` scope, the Scope.ID = Ingress id (the unique id based on service and its ingress)
 
-### Examples
+#### Examples
 ```
 // Caculate p99 of both Ingress1 and Ingress2
 Ingress_p99 = from(Ingress.latency).filter(name in ("Ingress1", "Ingress2")).summary(0.99)
@@ -101,6 +101,55 @@ Ingress_500 = from(Ingress.*).filter(responseCode like "5%").percent()
 
 // Caculate the sum of calls for each service.
 IngressCalls = from(Ingress.*).sum()
+```
+
+## Query in OAP
+Query is the core feature of OAP for visualization and other higher system. The query matches the metric type.
+
+There are two types of query provided.
+1. Hard codes query implementor
+1. Metric style query of implementor
+
+### Hard codes
+Hard codes query implementor, is for complex logic query, such as: topology map, dependency map, which 
+most likely relate to mapping mechanism of the node relationship.
+
+Even so, hard codes implementors are based on metric style query too, just need extra codes to assemble the 
+results.
+
+### Metric style query
+Metric style query is based on the given scope and metric name in oal scripts.
+
+Metric style query provided in two ways
+- GraphQL way. UI uses this directly, and assembles the pages.
+- API way. Most for `Hard codes query implementor` to do extra works.
+
+#### Grammar
+```
+Metric.Scope(SCOPE).Func(METRIC_NAME [, PARAM ...])
+```
+
+#### Scope
+**SCOPE** in (`All`, `Service`, `ServiceInst`, `Ingress`, `ServiceRelation`, `ServiceInstRelation`, `IngressRelation`).
+
+#### Metric name
+Metric name is defined in oal script. Such as **IngressCalls** is the name defined by `IngressCalls = from(Ingress.*).sum()`.
+
+#### Metric Query Function
+Metric Query Functions match the Aggregation Function in most cases, but include some order or filter features.
+Try to keep the name as same as the aggregation functions.
+
+Provided functions
+- `top`
+- `trend`
+- `histogram`
+- `sum`
+
+#### Example
+For `avg` aggregate func, `top` match it, also with parameter[1] of result size and parameter[2] of order
+```
+# for Service_avg = from(Service.latency).avg()
+Metric.Scope("Service").topn("Service_avg", 10, "desc")
 ```
 
 ## Project structure overview
