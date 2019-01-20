@@ -19,32 +19,17 @@
 package org.apache.skywalking.oap.server.receiver.trace.provider.parser;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import lombok.Setter;
-import org.apache.skywalking.apm.network.language.agent.SpanType;
-import org.apache.skywalking.apm.network.language.agent.UniqueId;
-import org.apache.skywalking.apm.network.language.agent.UpstreamSegment;
+import org.apache.skywalking.apm.network.language.agent.*;
 import org.apache.skywalking.apm.network.language.agent.v2.SegmentObject;
-import org.apache.skywalking.oap.server.library.buffer.DataStreamReader;
+import org.apache.skywalking.oap.server.library.buffer.*;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.TimeBucketUtils;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.ReferenceDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SegmentCoreInfo;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SegmentDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SpanDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.EntrySpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.ExitSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.FirstSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.GlobalTraceIdsListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.LocalSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.SpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.ReferenceIdExchanger;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SegmentStandardization;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SegmentStandardizationWorker;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SpanIdExchanger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.*;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.*;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.*;
+import org.slf4j.*;
 
 /**
  * SegmentParseV2 is a replication of SegmentParse, but be compatible with v2 trace protocol.
@@ -71,12 +56,18 @@ public class SegmentParseV2 {
         this.segmentCoreInfo.setV2(true);
     }
 
-    public boolean parse(UpstreamSegment segment, SegmentSource source) {
+    public boolean parse(BufferData<UpstreamSegment> bufferData, SegmentSource source) {
         createSpanListeners();
 
         try {
-            List<UniqueId> traceIds = segment.getGlobalTraceIdsList();
-            SegmentObject segmentObject = parseBinarySegment(segment);
+            UpstreamSegment upstreamSegment = bufferData.getMessageType();
+
+            List<UniqueId> traceIds = upstreamSegment.getGlobalTraceIdsList();
+
+            if (bufferData.getV2Segment() == null) {
+                bufferData.setV2Segment(parseBinarySegment(upstreamSegment));
+            }
+            SegmentObject segmentObject = parseBinarySegment(upstreamSegment);
 
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
@@ -86,7 +77,7 @@ public class SegmentParseV2 {
                 }
 
                 if (source.equals(SegmentSource.Agent)) {
-                    writeToBufferFile(segmentCoreInfo.getSegmentId(), segment);
+                    writeToBufferFile(segmentCoreInfo.getSegmentId(), upstreamSegment);
                 }
                 return false;
             } else {
@@ -247,13 +238,13 @@ public class SegmentParseV2 {
         public void send(UpstreamSegment segment, SegmentSource source) {
             SegmentParseV2 segmentParse = new SegmentParseV2(moduleManager, listenerManager);
             segmentParse.setStandardizationWorker(standardizationWorker);
-            segmentParse.parse(segment, source);
+            segmentParse.parse(new BufferData<>(segment), source);
         }
 
-        @Override public boolean call(UpstreamSegment segment) {
+        @Override public boolean call(BufferData<UpstreamSegment> bufferData) {
             SegmentParseV2 segmentParse = new SegmentParseV2(moduleManager, listenerManager);
             segmentParse.setStandardizationWorker(standardizationWorker);
-            return segmentParse.parse(segment, SegmentSource.Buffer);
+            return segmentParse.parse(bufferData, SegmentSource.Buffer);
         }
     }
 }

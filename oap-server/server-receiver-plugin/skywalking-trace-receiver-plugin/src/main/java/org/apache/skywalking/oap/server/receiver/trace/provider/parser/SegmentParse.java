@@ -19,32 +19,16 @@
 package org.apache.skywalking.oap.server.receiver.trace.provider.parser;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import lombok.Setter;
-import org.apache.skywalking.apm.network.language.agent.SpanType;
-import org.apache.skywalking.apm.network.language.agent.TraceSegmentObject;
-import org.apache.skywalking.apm.network.language.agent.UniqueId;
-import org.apache.skywalking.apm.network.language.agent.UpstreamSegment;
-import org.apache.skywalking.oap.server.library.buffer.DataStreamReader;
+import org.apache.skywalking.apm.network.language.agent.*;
+import org.apache.skywalking.oap.server.library.buffer.*;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.TimeBucketUtils;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.ReferenceDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SegmentCoreInfo;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SegmentDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.SpanDecorator;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.EntrySpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.ExitSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.FirstSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.GlobalTraceIdsListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.LocalSpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.SpanListener;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.ReferenceIdExchanger;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SegmentStandardization;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SegmentStandardizationWorker;
-import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.SpanIdExchanger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.decorator.*;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.*;
+import org.apache.skywalking.oap.server.receiver.trace.provider.parser.standardization.*;
+import org.slf4j.*;
 
 /**
  * @author peng-yongsheng
@@ -69,12 +53,17 @@ public class SegmentParse {
         this.segmentCoreInfo.setV2(false);
     }
 
-    public boolean parse(UpstreamSegment segment, Source source) {
+    public boolean parse(BufferData<UpstreamSegment> bufferData, Source source) {
         createSpanListeners();
 
         try {
-            List<UniqueId> traceIds = segment.getGlobalTraceIdsList();
-            TraceSegmentObject segmentObject = parseBinarySegment(segment);
+            UpstreamSegment upstreamSegment = bufferData.getMessageType();
+            List<UniqueId> traceIds = upstreamSegment.getGlobalTraceIdsList();
+
+            if (bufferData.getV1Segment() == null) {
+                bufferData.setV1Segment(parseBinarySegment(upstreamSegment));
+            }
+            TraceSegmentObject segmentObject = bufferData.getV1Segment();
 
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
@@ -84,7 +73,7 @@ public class SegmentParse {
                 }
 
                 if (source.equals(Source.Agent)) {
-                    writeToBufferFile(segmentCoreInfo.getSegmentId(), segment);
+                    writeToBufferFile(segmentCoreInfo.getSegmentId(), upstreamSegment);
                 }
                 return false;
             } else {
@@ -125,16 +114,18 @@ public class SegmentParse {
         segmentCoreInfo.setDataBinary(segmentDecorator.toByteArray());
         segmentCoreInfo.setV2(false);
 
+        boolean exchanged = true;
+
         for (int i = 0; i < segmentDecorator.getSpansCount(); i++) {
             SpanDecorator spanDecorator = segmentDecorator.getSpans(i);
 
             if (!SpanIdExchanger.getInstance(moduleManager).exchange(spanDecorator, segmentCoreInfo.getServiceId())) {
-                return false;
+                exchanged = false;
             } else {
                 for (int j = 0; j < spanDecorator.getRefsCount(); j++) {
                     ReferenceDecorator referenceDecorator = spanDecorator.getRefs(j);
                     if (!ReferenceIdExchanger.getInstance(moduleManager).exchange(referenceDecorator, segmentCoreInfo.getServiceId())) {
-                        return false;
+                        exchanged = false;
                     }
                 }
             }
@@ -148,28 +139,30 @@ public class SegmentParse {
             segmentCoreInfo.setError(spanDecorator.getIsError() || segmentCoreInfo.isError());
         }
 
-        long minuteTimeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(segmentCoreInfo.getStartTime());
-        segmentCoreInfo.setMinuteTimeBucket(minuteTimeBucket);
+        if (exchanged) {
+            long minuteTimeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(segmentCoreInfo.getStartTime());
+            segmentCoreInfo.setMinuteTimeBucket(minuteTimeBucket);
 
-        for (int i = 0; i < segmentDecorator.getSpansCount(); i++) {
-            SpanDecorator spanDecorator = segmentDecorator.getSpans(i);
+            for (int i = 0; i < segmentDecorator.getSpansCount(); i++) {
+                SpanDecorator spanDecorator = segmentDecorator.getSpans(i);
 
-            if (spanDecorator.getSpanId() == 0) {
-                notifyFirstListener(spanDecorator);
-            }
+                if (spanDecorator.getSpanId() == 0) {
+                    notifyFirstListener(spanDecorator);
+                }
 
-            if (SpanType.Exit.equals(spanDecorator.getSpanType())) {
-                notifyExitListener(spanDecorator);
-            } else if (SpanType.Entry.equals(spanDecorator.getSpanType())) {
-                notifyEntryListener(spanDecorator);
-            } else if (SpanType.Local.equals(spanDecorator.getSpanType())) {
-                notifyLocalListener(spanDecorator);
-            } else {
-                logger.error("span type value was unexpected, span type name: {}", spanDecorator.getSpanType().name());
+                if (SpanType.Exit.equals(spanDecorator.getSpanType())) {
+                    notifyExitListener(spanDecorator);
+                } else if (SpanType.Entry.equals(spanDecorator.getSpanType())) {
+                    notifyEntryListener(spanDecorator);
+                } else if (SpanType.Local.equals(spanDecorator.getSpanType())) {
+                    notifyLocalListener(spanDecorator);
+                } else {
+                    logger.error("span type value was unexpected, span type name: {}", spanDecorator.getSpanType().name());
+                }
             }
         }
 
-        return true;
+        return exchanged;
     }
 
     private void writeToBufferFile(String id, UpstreamSegment upstreamSegment) {
@@ -249,13 +242,13 @@ public class SegmentParse {
         public void send(UpstreamSegment segment, Source source) {
             SegmentParse segmentParse = new SegmentParse(moduleManager, listenerManager);
             segmentParse.setStandardizationWorker(standardizationWorker);
-            segmentParse.parse(segment, source);
+            segmentParse.parse(new BufferData<>(segment), source);
         }
 
-        @Override public boolean call(UpstreamSegment segment) {
+        @Override public boolean call(BufferData<UpstreamSegment> bufferData) {
             SegmentParse segmentParse = new SegmentParse(moduleManager, listenerManager);
             segmentParse.setStandardizationWorker(standardizationWorker);
-            return segmentParse.parse(segment, Source.Buffer);
+            return segmentParse.parse(bufferData, Source.Buffer);
         }
     }
 }
