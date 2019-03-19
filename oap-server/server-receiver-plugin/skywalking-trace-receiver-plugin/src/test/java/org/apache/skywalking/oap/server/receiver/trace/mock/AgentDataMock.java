@@ -64,6 +64,7 @@ public class AgentDataMock {
         TimeUnit.SECONDS.sleep(10);
 
         for (int i = 0; i < 500; i++) {
+            startTimestamp = startTimestamp + 5000;
             globalTraceId = UniqueIdBuilder.INSTANCE.create();
             serviceASegmentId = UniqueIdBuilder.INSTANCE.create();
             serviceBSegmentId = UniqueIdBuilder.INSTANCE.create();

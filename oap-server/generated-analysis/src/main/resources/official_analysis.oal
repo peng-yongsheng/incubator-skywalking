@@ -34,6 +34,12 @@ service_p90 = from(Service.latency).p90(10);
 service_p75 = from(Service.latency).p75(10);
 service_p50 = from(Service.latency).p50(10);
 
+service_response_s1_summary = from(Service.*).filter(status == true).filter(latency <= 1000).count();
+service_response_s3_summary = from(Service.*).filter(status == true).filter(latency > 1000).filter(latency <= 3000).count();
+service_response_s5_summary = from(Service.*).filter(status == true).filter(latency > 3000).filter(latency <= 5000).count();
+service_response_slow_summary = from(Service.*).filter(status == true).filter(latency > 5000).count();
+service_response_error_summary = from(Service.*).filter(status == false).count();
+
 // Service relation scope metric for topology
 service_relation_client_cpm = from(ServiceRelation.*).filter(detectPoint == DetectPoint.CLIENT).cpm();
 service_relation_server_cpm = from(ServiceRelation.*).filter(detectPoint == DetectPoint.SERVER).cpm();

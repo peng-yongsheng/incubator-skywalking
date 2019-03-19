@@ -20,6 +20,7 @@ package org.apache.skywalking.oap.server.receiver.trace.mock;
 
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.skywalking.apm.network.language.agent.*;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
@@ -28,6 +29,7 @@ import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
  */
 class ServiceAMock {
 
+    static AtomicInteger integer = new AtomicInteger(1);
     static String REST_ENDPOINT = "/dubbox-case/case/dubbox-rest";
     static String DUBBO_ENDPOINT = "org.skywaking.apm.testcase.dubbo.services.GreetService.doBusiness()";
     static String DUBBO_ADDRESS = "DubboIPAddress:1000";
@@ -72,14 +74,18 @@ class ServiceAMock {
         span.setSpanLayer(SpanLayer.Http);
         span.setParentSpanId(-1);
         span.setStartTime(startTimestamp);
-        span.setEndTime(startTimestamp + 6000);
+        span.setEndTime(startTimestamp + (integer.incrementAndGet() * 200) + 200);
         span.setComponentId(ComponentsDefine.TOMCAT.getId());
         if (isPrepare) {
             span.setOperationName(REST_ENDPOINT);
         } else {
             span.setOperationNameId(2);
         }
-        span.setIsError(false);
+        if (integer.get() % 2 == 0) {
+            span.setIsError(false);
+        } else {
+            span.setIsError(true);
+        }
         return span;
     }
 
