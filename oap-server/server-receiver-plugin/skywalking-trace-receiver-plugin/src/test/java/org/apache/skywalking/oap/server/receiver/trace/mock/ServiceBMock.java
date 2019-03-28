@@ -93,7 +93,7 @@ class ServiceBMock {
         span.setSpanLayer(SpanLayer.RPCFramework);
         span.setParentSpanId(-1);
         span.setStartTime(startTimestamp + 500);
-        span.setEndTime(startTimestamp + 5000);
+        span.setEndTime(startTimestamp + 800);
         span.setComponentId(ComponentsDefine.DUBBO.getId());
         span.setIsError(false);
         span.addRefs(createReference(uniqueId, isPrepare));

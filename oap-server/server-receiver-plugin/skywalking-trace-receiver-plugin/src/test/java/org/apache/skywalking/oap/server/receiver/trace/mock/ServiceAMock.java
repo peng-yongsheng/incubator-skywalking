@@ -74,7 +74,7 @@ class ServiceAMock {
         span.setSpanLayer(SpanLayer.Http);
         span.setParentSpanId(-1);
         span.setStartTime(startTimestamp);
-        span.setEndTime(startTimestamp + (COUNTER.incrementAndGet() * 200) + 200);
+        span.setEndTime(startTimestamp + (COUNTER.incrementAndGet() * 2));
         span.setComponentId(ComponentsDefine.TOMCAT.getId());
         if (isPrepare) {
             span.setOperationName(REST_ENDPOINT);
