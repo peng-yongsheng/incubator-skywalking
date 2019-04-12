@@ -20,6 +20,13 @@ package org.apache.skywalking.apm.webapp.proxy;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.skywalking.apm.webapp.controller.ProjectsController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +40,13 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 @Component
 @ConfigurationProperties(prefix = "collector")
 public class RewritePathFilter extends ZuulFilter {
+    private Logger logger = LoggerFactory.getLogger(RewritePathFilter.class);
+
 
     private static final String REQUEST_URI = "requestURI";
 
     private static final int ORDER = PRE_DECORATION_FILTER_ORDER + 2;
-    
+
     private String path;
 
     public String getPath() {
@@ -67,7 +76,20 @@ public class RewritePathFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
+        HttpServletResponse response = ctx.getResponse();
+
+        HttpSession session = request.getSession(false);
+        if (session == null || !session.isNew()) {
+            try {
+                response.sendRedirect("http://api.devitwork.yonghui.cn/oauth/oauth/authorize?response_type=code&client_id=skywalking&redirect_uri=http://10.67.53.46:8080/sso/callback");
+            } catch (IOException e) {
+                logger.error("", e);
+            }
+        }
+        String name = session.getAttribute("projectName").toString();
         ctx.set(REQUEST_URI, path);
+        ctx.set("projectName", name);
         return null;
     }
 }
