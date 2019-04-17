@@ -29,9 +29,14 @@ collector:
   ribbon:
     # Point to all backend's restHost:restPort, split by ,
     listOfServers: 127.0.0.1:12800
+    ReadTimeout: 60000
+    ConnectTimeout: 60000
 
 security:
   user:
     admin:
       password: admin
-      
+
+sso:
+  ssologin: http://api.devitwork.yonghui.cn/oauth/oauth/authorize?response_type=code&client_id=skywalking&redirect_uri=http://localhost:8080/sso/callback?env=test
+  redicturl: /#/monitor/dashboard
