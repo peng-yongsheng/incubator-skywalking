@@ -45,9 +45,9 @@ core:
     gRPCHost: ${SW_CORE_GRPC_HOST:0.0.0.0}
     gRPCPort: ${SW_CORE_GRPC_PORT:11800}
     downsampling:
-    - Hour
-    - Day
-    - Month
+      - Hour
+      - Day
+      - Month
     # Set a timeout on metric data. After the timeout has expired, the metric data will automatically be deleted.
     recordDataTTL: ${SW_CORE_RECORD_DATA_TTL:90} # Unit is minute
     minuteMetricsDataTTL: ${SW_CORE_MINUTE_METRIC_DATA_TTL:90} # Unit is minute
@@ -57,7 +57,7 @@ core:
 storage:
   elasticsearch:
     nameSpace: ${SW_NAMESPACE:""}
-    clusterNodes: ${SW_STORAGE_ES_CLUSTER_NODES:10.251.69.5:9200,10.251.69.6:9200}
+    clusterNodes: ${SW_STORAGE_ES_CLUSTER_NODES:localhost:9200}
     user: ${SW_ES_USER:""}
     password: ${SW_ES_PASSWORD:""}
     indexShardsNumber: ${SW_STORAGE_ES_INDEX_SHARDS_NUMBER:2}
