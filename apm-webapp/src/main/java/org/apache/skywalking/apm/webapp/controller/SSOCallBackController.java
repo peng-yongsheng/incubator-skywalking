@@ -48,14 +48,12 @@ public class SSOCallBackController {
     @GetMapping(value = "callback")
     public void getCode(@RequestParam String code, HttpServletRequest request, String env,
         HttpServletResponse response) {
-        //return code;
         StandardSessionFacade session = (StandardSessionFacade)request.getSession(true);
         session.setMaxInactiveInterval(1800);
         String userId = ssOservice.getUserId(code, env);
         session.setAttribute("userId", userId);
         session.setAttribute("env", env);
         try {
-
             response.sendRedirect(ssoConfiguration.getRedicturl());
         } catch (Exception e) {
             logger.error("", e);

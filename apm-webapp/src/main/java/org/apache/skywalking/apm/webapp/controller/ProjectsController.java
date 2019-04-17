@@ -35,7 +35,6 @@ public class ProjectsController {
         Object userId = null;
         try {
             HttpSession session = request.getSession();
-            // session.getId()
             userId = session.getAttribute("userId");
             env = session.getAttribute("env");
             if (userId == null || env == null) {
