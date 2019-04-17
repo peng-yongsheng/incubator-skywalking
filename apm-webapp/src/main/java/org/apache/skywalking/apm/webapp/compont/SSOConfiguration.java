@@ -11,6 +11,15 @@ import org.springframework.stereotype.Component;
 public class SSOConfiguration {
     private String ssologin;
     private String redicturl;
+    private String skywalkingCallback;
+
+    public String getSkywalkingCallback() {
+        return skywalkingCallback;
+    }
+
+    public void setSkywalkingCallback(String skywalkingCallback) {
+        this.skywalkingCallback = skywalkingCallback;
+    }
 
     public String getRedicturl() {
         return redicturl;

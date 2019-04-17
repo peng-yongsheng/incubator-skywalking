@@ -43,7 +43,7 @@ public class ProjectsController {
                 response.setHeader("invalid", "true");
                 return new R(504, "session is invalid", null, null);
             }
-            projects = ssOservice.getProjects(userId.toString(), env.toString());
+            projects = ssOservice.getProjects(userId.toString());
         } catch (Exception e) {
             logger.error("", e);
             return new R(500, e.getMessage(), null, null);

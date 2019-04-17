@@ -36,7 +36,7 @@ security:
   user:
     admin:
       password: admin
-
 sso:
-  ssologin: http://api.devitwork.yonghui.cn/oauth/oauth/authorize?response_type=code&client_id=tskywalking&redirect_uri=http://testtrace.itwork.yonghui.cn/sso/callback?env=test
+  ssologin: http://api.devitwork.yonghui.cn/oauth/oauth/authorize?response_type=code&client_id=tskywalking&redirect_uri=http://localhost:8080/sso/callback?env=test
   redicturl: /#/monitor/dashboard
+  skywalkingCallback: http://localhost:8080/sso/callback
