@@ -35,7 +35,6 @@ public class ProjectsController {
         Object userId = null;
         try {
             HttpSession session = request.getSession();
-            // session.getId()
             userId = session.getAttribute("userId");
             env = session.getAttribute("env");
             if (userId == null || env == null) {
@@ -44,7 +43,7 @@ public class ProjectsController {
                 response.setHeader("invalid", "true");
                 return new R(504, "session is invalid", null, null);
             }
-            projects = ssOservice.getProjects(userId.toString(), env.toString());
+            projects = ssOservice.getProjects(userId.toString());
         } catch (Exception e) {
             logger.error("", e);
             return new R(500, e.getMessage(), null, null);
