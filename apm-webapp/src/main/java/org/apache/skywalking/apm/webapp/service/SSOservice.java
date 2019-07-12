@@ -46,13 +46,13 @@ public class SSOservice {
 
     public String getUserId(String code, String env) {
         java.util.Base64.Encoder encoder = java.util.Base64.getEncoder();
-        String encode = null;
-
+        String encode = "Basic " + encoder.encodeToString((ssoConfiguration.getKey() + ":" + ssoConfiguration.getSecret()).getBytes(StandardCharsets.UTF_8));
+        /*
         if ("test".equals(env)) {
             encode = "Basic " + encoder.encodeToString(("tskywalking" + ":" + "secret").getBytes(StandardCharsets.UTF_8));
         } else if ("prd".equals(env)) {
             encode = "Basic " + encoder.encodeToString(("pskywalking" + ":" + "secret").getBytes(StandardCharsets.UTF_8));
-        }
+        }*/
         TokenInfo tokenInfo = ssoFeignClient.getToken(code, ssoConfiguration.getSkywalkingCallback() + "?env=" + env, "authorization_code", encode).getBody();
         Object user = ssoFeignClient.getUser(tokenInfo.getToken_type() + " " + tokenInfo.getAccess_token()).getBody();
         Gson gson = new Gson();

@@ -62,7 +62,7 @@ public enum DataTTLKeeperTimer {
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
             new RunnableWithExceptionProtection(this::delete,
-                t -> logger.error("Remove data in background failure.", t)), 1, 5, TimeUnit.MINUTES);
+                t -> logger.error("Remove data in background failure.", t)), 13, 24, TimeUnit.HOURS);
     }
 
     private void delete() {
