@@ -68,7 +68,8 @@ public class AgentDataMock {
 
         TimeUnit.SECONDS.sleep(10);
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 100000; i++) {
+            startTimestamp = startTimestamp + 100;
             globalTraceId = UniqueIdBuilder.INSTANCE.create();
             serviceASegmentId = UniqueIdBuilder.INSTANCE.create();
             serviceBSegmentId = UniqueIdBuilder.INSTANCE.create();
@@ -76,6 +77,7 @@ public class AgentDataMock {
             serviceAMock.mock(streamObserver, globalTraceId, serviceASegmentId, startTimestamp, true);
             serviceBMock.mock(streamObserver, globalTraceId, serviceBSegmentId, serviceASegmentId, startTimestamp, true);
             serviceCMock.mock(streamObserver, globalTraceId, serviceCSegmentId, serviceBSegmentId, startTimestamp, true);
+            TimeUnit.MILLISECONDS.sleep(100);
         }
 
         streamObserver.onCompleted();

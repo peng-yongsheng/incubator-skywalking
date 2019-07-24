@@ -16,22 +16,24 @@
  *
  */
 
-package org.apache.skywalking.apm.webapp;
+package org.apache.skywalking.apm.webapp.sso;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
 
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@EnableFeignClients
-@SpringBootApplication
-@EnableZuulProxy
-public class ApplicationStartUp extends SpringBootServletInitializer {
+/**
+ * @author Liu-XinYuan
+ */
+@FeignClient(name = "openapi", url = "http://openapis.yonghui.cn")
+@Component
+public interface OpenPrdFeignClient {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ApplicationStartUp.class, args);
-    }
+    @RequestMapping(value = "/api/v1/yhmds/itwork/project/{userId}/project", method = RequestMethod.GET)
+    ResponseEntity<Object> getProjects(@PathVariable(name = "userId") String userId);
 
 }

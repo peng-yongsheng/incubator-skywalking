@@ -68,7 +68,7 @@ class ServiceCMock {
         span.setSpanLayer(SpanLayer.MQ);
         span.setParentSpanId(-1);
         span.setStartTime(startTimestamp + 3000);
-        span.setEndTime(startTimestamp + 5000);
+        span.setEndTime(startTimestamp + 4700);
         span.setComponentId(ComponentsDefine.ROCKET_MQ_CONSUMER.getId());
         span.setIsError(false);
         span.addRefs(createReference(uniqueId, isPrepare));
